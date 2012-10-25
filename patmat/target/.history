@@ -1,0 +1,42 @@
+compile
+test
+compile
+test
+compile
+test
+compile
+test
+compile
+console
+compile
+submit
+submit srenault.contact@gmail.com mx2u8P9dv3
+compile
+test
+compile
+console
+compile
+test
+compile
+test
+console
+test
+compile
+console
+compile
+console
+compile
+console
+test
+submit srenault.contact@gmail.com mx2u8P9dv3
+compile
+test
+compile
+test
+def init[T](xs: List[T]): List[T] = xs match {
+  case List() => throw new Exception("")
+  case head :: Nil => List(head)
+  case head :: tail => head :: init(tail)
+}
+submit
+submit srenault.contact@gmail.com mx2u8P9dv3

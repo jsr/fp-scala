@@ -1,0 +1,69 @@
+test
+console
+test
+:paste
+test
+compile
+import common.Main._
+console
+test
+compile
+:paste
+  def countChange(money: Int, coins: List[Int]) = {
+    def validCoins(coins: List[Int], checked: List[(Int, Int)]): List[(Int, Int)] = {
+      coins match {
+        case head :: tail if((money % head) == 0) => validCoins(tail, checked :+ (head -> money/head))
+        case Nil => checked
+      }
+      validCoins(List(500,5,50,100,20,200,10), Nil)
+    }
+  }
+compile
+:paste
+  def countChange(money: Int, coins: List[Int]) = {
+    def denominators(c: List[Int], found: List[(Int, Int)]): List[(Int, Int)] = {
+      coins match {
+        case l if(!l.isEmpty && (money % l.head == 0)) => {
+          println("found")
+          denominators(l.tail, found :+ (l.head, money/l.head))
+        }
+        case l if(!l.isEmpty) => {
+          println("passed")
+          denominators(l.tail, found)
+        }
+        case Nil => found
+      }
+    }
+    denominators(coins, Nil)
+  }
+compile
+test
+:paste
+  def countChange(money: Int, coins: List[Int]): Int = {
+    println("countChange " + money + " " + coins.toString)
+    (money, coins) match {
+      case (0, _) => 1
+      case (_, Nil) => 0
+      case (money, coins) if((coins.size == 1) && (money % coins.head == 0)) => 1
+      case (money, coins) => {
+        if(money <= coins.head) {
+          val possibilities = math.round(money / coins.head)
+          def countWithOthers(p: Int, count: Int): Int = {
+            println("countWithOthers " + p + " " + count)
+            if(p <= possibilities) {
+              val c = countChange(money - (coins.head * p), coins.tail)
+              countWithOthers(p+1, count + c)
+            } else count
+          }
+          countChange(money, coins.tail) + countWithOthers(1, 0)
+        } else {
+          countChange(money, coins.tail)
+        }
+      }
+    }
+  }
+test
+submit srenault.contact@gmail.com mx2u8P9dv3
+test
+submit srenault.contact@gmail.com mx2u8P9dv3
+console
