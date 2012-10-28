@@ -94,7 +94,7 @@ object Anagrams {
     }
 
     def comb(elt: List[Occurrences], rest: List[Occurrences], deep: Int): List[Occurrences] = (elt, rest) match {
-      case ((head :: tail), _) if(head.length == deep) => elt
+      case (head :: tail, _) if(head.length == deep) => elt
       case (acc, head :: tail) => {
         val res = for {
           x <- head
@@ -107,10 +107,11 @@ object Anagrams {
 
     def loop(occ: List[Occurrences], acc: List[Occurrences]): List[Occurrences] = occ match {
       case head :: tail => {
-        val res = (1 to occurrences.length).map { deep =>
-          comb(List(head), tail, deep)
-        }.reduceLeft(_ ++ _)
-        loop(tail, res)
+        val res = (for {
+          deep <- 1 to occurrences.length
+          cb <- head
+        } yield comb(List(List(cb)), tail, deep)).reduceLeft(_ ++ _).toList
+        loop(tail, acc ++ res)
       }
       case Nil => acc
     }
