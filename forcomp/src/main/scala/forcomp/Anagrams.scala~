@@ -84,7 +84,60 @@ object Anagrams {
    *  Note that the order of the occurrence list subsets does not matter -- the subsets
    *  in the example above could have been displayed in some other order.
    */
-  def combinations(occurrences: Occurrences): List[Occurrences] = ???
+  def combinations(occurrences: Occurrences): List[Occurrences] = {
+
+    def decompose(elt: (Char, Int)): List[Occurrences] = elt match {
+      case (char, count) =>
+        (for {
+          index <- 1 to count
+        } yield List(char -> index)).toList
+    }
+
+    def comb(elt: List[Occurences], rest: List[Occurences], deep: Int): List[Occurrences] = (elt, rest) match {
+      case ((h1 :: t1), _) if(h1.length == deep) => elt
+      case (acc, h2 :: t2) => {
+        (for {
+          x <- h2
+          y <- acc
+        } yield (x :+ y))
+        comb(res, t2, deep)
+      }
+    }
+
+    def loop(occ: List[Occurrences]): List[Occurences] = occ = match {
+      case head :: tail => 
+    }
+  }
+
+// List(
+//   List((a,1), (b,1)),
+//   List((a,1), (b,2)),
+//   List((a,2), (b,1)),
+//   List((a,2), (b,2)),
+//   List((a,1), (b,1)),
+//   List((a,1), (c,1)),
+//   List((a,1), (b,1)),
+//   List((a,1), (c,2)),
+//   List((a,1), (b,2)),
+//   List((a,1), (c,1)),
+//   List((a,1), (b,2)),
+//   List((a,1), (c,2)),
+//   List((a,2), (b,1)),
+//   List((a,2), (c,1)),
+//   List((a,2), (b,1)),
+//   List((a,2), (c,2)),
+//   List((a,2), (b,2)),
+//   List((a,2), (c,1)),
+//   List((a,2), (b,2)),
+//   List((a,2), (c,2)),
+//   List((a,1)),
+//   List((a,2)),
+//   List((b,1)),
+//   List((b,2)),
+//   List((c,1)),
+//   List((c,2)),
+//   List()
+// )
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
    * 

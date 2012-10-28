@@ -1,8 +1,8 @@
 [0m[[0mdebug[0m] [0mOther repositories:[0m
 [0m[[0mdebug[0m] [0mDefault repositories:[0m
 [0m[[0mdebug[0m] [0m	Raw(ProjectResolver(inter-project, mapped: ))[0m
-[0m[[0mdebug[0m] [0m	URLRepository(typesafe-ivy-releases,sbt.Patterns@24d200d8)[0m
-[0m[[0mdebug[0m] [0m	URLRepository(sbt-plugin-releases,sbt.Patterns@573577ca)[0m
-[0m[[0mdebug[0m] [0m	FileRepository(local,FileConfiguration(true,None),sbt.Patterns@774b9b80)[0m
+[0m[[0mdebug[0m] [0m	URLRepository(typesafe-ivy-releases,sbt.Patterns@44449afc)[0m
+[0m[[0mdebug[0m] [0m	URLRepository(sbt-plugin-releases,sbt.Patterns@741b3967)[0m
+[0m[[0mdebug[0m] [0m	FileRepository(local,FileConfiguration(true,None),sbt.Patterns@2755d4be)[0m
 [0m[[0mdebug[0m] [0m	public: http://repo1.maven.org/maven2/[0m
 [0m[[0mdebug[0m] [0mUsing inline dependencies specified in Scala.[0m

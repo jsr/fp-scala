@@ -86,61 +86,36 @@ object Anagrams {
    */
   def combinations(occurrences: Occurrences): List[Occurrences] = {
 
-    def unique(elt: (Char, Int)): List[Occurrences] = elt match {
+    def decompose(elt: (Char, Int)): List[Occurrences] = elt match {
       case (char, count) =>
         (for {
           index <- 1 to count
         } yield List(char -> index)).toList
     }
 
-    def comb(occ: Occurrences): List[Occurrences] = occ match {
-      case head :: Nil => unique(head)
-      case head :: tail =>
-        (for {
-          w1 <- comb(List(head))
-          c1 <- w1
-          w2 <- comb(tail)
-          c2 <- w2
-        } yield List(c1, c2)
-       ).toList
-      case Nil => Nil
+    def comb(elt: List[Occurrences], rest: List[Occurrences], deep: Int): List[Occurrences] = (elt, rest) match {
+      case ((head :: tail), _) if(head.length == deep) => elt
+      case (acc, head :: tail) => {
+        val res = for {
+          x <- head
+          y <- acc
+        } yield (y :+ x)
+        comb(res, tail, deep)
+      }
+      case (_, Nil) => elt
     }
 
-    (for {
-      index <- 2 to occurrences.length
-      c <- comb(occurrences.take(index))
-    } yield c).toList ++ occurrences.flatMap(unique) ++ List(Nil)
+    def loop(occ: List[Occurrences], acc: List[Occurrences]): List[Occurrences] = occ match {
+      case head :: tail => {
+        val res = (1 to occurrences.length).map { deep =>
+          comb(List(head), tail, deep)
+        }.reduceLeft(_ ++ _)
+        loop(tail, res)
+      }
+      case Nil => acc
+    }
+    loop(occurrences.flatMap(decompose), Nil)
   }
-
-// List(
-//   List((a,1), (b,1)),
-//   List((a,1), (b,2)),
-//   List((a,2), (b,1)),
-//   List((a,2), (b,2)),
-//   List((a,1), (b,1)),
-//   List((a,1), (c,1)),
-//   List((a,1), (b,1)),
-//   List((a,1), (c,2)),
-//   List((a,1), (b,2)),
-//   List((a,1), (c,1)),
-//   List((a,1), (b,2)),
-//   List((a,1), (c,2)),
-//   List((a,2), (b,1)),
-//   List((a,2), (c,1)),
-//   List((a,2), (b,1)),
-//   List((a,2), (c,2)),
-//   List((a,2), (b,2)),
-//   List((a,2), (c,1)),
-//   List((a,2), (b,2)),
-//   List((a,2), (c,2)),
-//   List((a,1)),
-//   List((a,2)),
-//   List((b,1)),
-//   List((b,2)),
-//   List((c,1)),
-//   List((c,2)),
-//   List()
-// )
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
    * 

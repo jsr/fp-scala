@@ -1,5 +1,5 @@
 [0m[[0mdebug[0m] [0mRunning Test forcomp.AnagramsSuite : subclass(false, org.scalatest.Suite) with arguments [0m
-[0m[[31merror[0m] [0mFailed: : Total 11, Failed 3, Errors 0, Passed 8, Skipped 0[0m
+[0m[[31merror[0m] [0mFailed: : Total 11, Failed 5, Errors 0, Passed 6, Skipped 0[0m
 [0m[[31merror[0m] [0mFailed tests:[0m
 [0m[[31merror[0m] [0m	forcomp.AnagramsSuite[0m
 java.lang.RuntimeException: Tests unsuccessful
@@ -25,7 +25,7 @@ java.lang.RuntimeException: Tests unsuccessful
 	at sbt.CompletionService$$anon$2.call(CompletionService.scala:30)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:439)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
