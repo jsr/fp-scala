@@ -85,37 +85,42 @@ object Anagrams {
    *  in the example above could have been displayed in some other order.
    */
   def combinations(occurrences: Occurrences): List[Occurrences] = {
-
-    def decompose(elt: (Char, Int)): List[Occurrences] = elt match {
+    def decompose(elt: (Char, Int)): Occurrences = elt match {
       case (char, count) =>
         (for {
           index <- 1 to count
-        } yield List(char -> index)).toList
+        } yield char -> index).toList
     }
 
-    def comb(elt: List[Occurrences], rest: List[Occurrences], deep: Int): List[Occurrences] = (elt, rest) match {
-      case (head :: tail, _) if(head.length == deep) => elt
-      case (acc, head :: tail) => {
-        val res = for {
-          x <- head
-          y <- acc
-        } yield (y :+ x)
-        comb(res, tail, deep)
+    def comb(elt: List[Occurrences], rest: List[Occurrences], deep: Int): List[Occurrences] = {
+      (elt, rest) match {
+        case (head :: tail, _) if(head.length == deep) => elt
+        case (acc, head :: tail) => {
+          val res = for {
+            x <- head
+            y <- elt
+          } yield (y :+ x)
+          comb(res, tail, deep)
+        }
+        case (_, Nil) => elt
       }
-      case (_, Nil) => elt
     }
 
-    def loop(occ: List[Occurrences], acc: List[Occurrences]): List[Occurrences] = occ match {
+    def loop(occ: Occurrences, acc: List[Occurrences]): List[Occurrences] = occ match {
       case head :: tail => {
         val res = (for {
           deep <- 1 to occurrences.length
-          cb <- head
-        } yield comb(List(List(cb)), tail, deep)).reduceLeft(_ ++ _).toList
+          cb <- decompose(head)
+        } yield comb(
+          List(List(cb)),
+          tail map (decompose),
+          deep
+        )).reduceLeft(_ ++ _).toList
         loop(tail, acc ++ res)
       }
       case Nil => acc
     }
-    loop(occurrences.flatMap(decompose), Nil)
+    loop(occurrences, Nil) ++ List(Nil)
   }
 
   /** Subtracts occurrence list `y` from occurrence list `x`.

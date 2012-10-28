@@ -8,7 +8,7 @@
 [0m[[0minfo[0m] [0m[31m- subtract: lard - r *** FAILED ***[0m[0m
 [0m[[0minfo[0m] [0m[31m  java.lang.Error: an implementation is missing[0m[0m
 [0m[[0minfo[0m] [0m[31m  at common.package$.$qmark$qmark$qmark(package.scala:7)[0m[0m
-[0m[[0minfo[0m] [0m[31m  at forcomp.Anagrams$.subtract(Anagrams.scala:131)[0m[0m
+[0m[[0minfo[0m] [0m[31m  at forcomp.Anagrams$.subtract(Anagrams.scala:140)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$7.apply$mcV$sp(AnagramsSuite.scala:49)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$7.apply(AnagramsSuite.scala:45)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$7.apply(AnagramsSuite.scala:45)[0m[0m
@@ -18,14 +18,12 @@
 [0m[[0minfo[0m] [0m[31m  at org.scalatest.FunSuite$class.invokeWithFixture$1(FunSuite.scala:1262)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at org.scalatest.FunSuite$$anonfun$runTest$1.apply(FunSuite.scala:1271)[0m[0m
 [0m[[0minfo[0m] [0m[31m  ...[0m[0m
-[0m[[0minfo[0m] [0m[31m- combinations: [] *** FAILED ***[0m[0m
-[0m[[0minfo[0m] [0m[31m  List() did not equal List(List()) (AnagramsSuite.scala:55)[0m[0m
-[0m[[0minfo[0m] [0m[31m- combinations: abba *** FAILED ***[0m[0m
-[0m[[0minfo[0m] [0m[31m  Set(List((a,1)), List((a,2)), List((a,2), (b,1)), List((a,1), (a,2)), List((b,2)), List((b,1), (b,2)), List((b,1))) did not equal Set(List((a,1)), List((a,2), (b,2)), List((a,1), (b,2)), List((a,2)), List(), List((a,2), (b,1)), List((b,2)), List((b,1)), List((a,1), (b,1))) (AnagramsSuite.scala:71)[0m[0m
+[0m[[0minfo[0m] [0m[32m- combinations: [][0m[0m
+[0m[[0minfo[0m] [0m[32m- combinations: abba[0m[0m
 [0m[[0minfo[0m] [0m[31m- sentence anagrams: [] *** FAILED ***[0m[0m
 [0m[[0minfo[0m] [0m[31m  java.lang.Error: an implementation is missing[0m[0m
 [0m[[0minfo[0m] [0m[31m  at common.package$.$qmark$qmark$qmark(package.scala:7)[0m[0m
-[0m[[0minfo[0m] [0m[31m  at forcomp.Anagrams$.sentenceAnagrams(Anagrams.scala:173)[0m[0m
+[0m[[0minfo[0m] [0m[31m  at forcomp.Anagrams$.sentenceAnagrams(Anagrams.scala:182)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$10.apply$mcV$sp(AnagramsSuite.scala:76)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$10.apply(AnagramsSuite.scala:74)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$10.apply(AnagramsSuite.scala:74)[0m[0m
@@ -38,7 +36,7 @@
 [0m[[0minfo[0m] [0m[31m- sentence anagrams: Linux rulez *** FAILED ***[0m[0m
 [0m[[0minfo[0m] [0m[31m  java.lang.Error: an implementation is missing[0m[0m
 [0m[[0minfo[0m] [0m[31m  at common.package$.$qmark$qmark$qmark(package.scala:7)[0m[0m
-[0m[[0minfo[0m] [0m[31m  at forcomp.Anagrams$.sentenceAnagrams(Anagrams.scala:173)[0m[0m
+[0m[[0minfo[0m] [0m[31m  at forcomp.Anagrams$.sentenceAnagrams(Anagrams.scala:182)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$11.apply$mcV$sp(AnagramsSuite.scala:103)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$11.apply(AnagramsSuite.scala:79)[0m[0m
 [0m[[0minfo[0m] [0m[31m  at forcomp.AnagramsSuite$$anonfun$11.apply(AnagramsSuite.scala:79)[0m[0m
