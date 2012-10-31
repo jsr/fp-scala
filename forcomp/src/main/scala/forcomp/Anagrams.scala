@@ -134,10 +134,6 @@ object Anagrams {
    *  and has no zero-entries.
    */
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
-    println("--------------")
-    println(x)
-    println(y)
-    println("--------------")
     def loop(acc: Map[Char, Int], elts: Occurrences): Occurrences = elts match {
       case (char, c1) :: tail => acc.get(char).map { c2 =>
         if(c2 - c1 <= 0) loop(acc - char, tail) else loop(acc updated (char, c2 - c1), tail)
@@ -189,31 +185,29 @@ object Anagrams {
    */
 
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
-    def findSentences(occurrences: Occurrences, sentence: Sentence): List[Sentence] = {
-      val cb = combinations(occurrences)
-      val words = cb match {
-        case Nil | List(Nil) => Nil
-        case head :: tail => dictionaryByOccurrences.get(head).getOrElse(Nil)
-      }
 
-      (words, cb) match {
-        case (_, Nil) | (_, List(Nil)) => List(sentence)
-        case (Nil, head :: tail ) => findSentences(subtract(occurrences, head), sentence)
-        case (words, head :: tail) =>
-          for {
-            word <- words
-            s <- findSentences(subtract(occurrences, head), sentence :+ word)
-          } yield s
+    def findSentences(all: Occurrences, occurrences: Occurrences, sentence: Sentence): List[Sentence] = {
+      combinations (occurrences) flatMap { occ =>
+        val words = dictionaryByOccurrences.get(occ) getOrElse Nil
+        (words, occ, all) match {
+          case (_, _, Nil) => List(sentence)
+          case (Nil, occ, all) if(occ.length > 0 || all.length > 0) => Nil
+          case (words, occ, _) =>
+            (for {
+              word <- words
+              s <- findSentences(subtract(all, occ), subtract(occurrences, occ), sentence :+ word)
+            } yield s)
+        }
       }
     }
 
+    val all = sentenceOccurrences(sentence)
     def loop(occurrences: List[Occurrences], acc: List[Sentence]): List[Sentence] = {
       occurrences match {
         case Nil => acc
-        case head :: tail => loop(tail, acc ++ findSentences(head, Nil))
+        case head :: tail => loop(tail, acc ++ findSentences(all, head, Nil))
       }
     }
-
-    loop(combinations(sentenceOccurrences(sentence)), Nil)
+    loop(combinations(all), Nil)
   }
 }
