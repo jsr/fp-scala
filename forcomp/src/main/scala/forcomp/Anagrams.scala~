@@ -134,10 +134,6 @@ object Anagrams {
    *  and has no zero-entries.
    */
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
-    println("--------------")
-    println(x)
-    println(y)
-    println("--------------")
     def loop(acc: Map[Char, Int], elts: Occurrences): Occurrences = elts match {
       case (char, c1) :: tail => acc.get(char).map { c2 =>
         if(c2 - c1 <= 0) loop(acc - char, tail) else loop(acc updated (char, c2 - c1), tail)
@@ -190,36 +186,33 @@ object Anagrams {
 
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
 
-    def findSentence(occurrences: Occurrences, sentence: Sentence): List[Sentence] = occurrences match {
-      case Nil => List(sentence)
-      case occ => {
-        combinations(occurrences).flatMap { occ =>
-          val words = dictionaryByOccurrences.get(occ).getOrElse(Nil)
-          val s: List[Sentence] = (words, occ) match {
-            case (_, Nil) => List(sentence)
-            case (Nil, occ) => Nil
-            case (words, occ) =>
-              (for {
-                word <- words
-                s <- findSentence(subtract(occurrences, occ), sentence :+ word)
-              } yield s)
-          }
-          s
+    def isRex(occ: Occurrences) = occ.toMap.get('r').isDefined  && occ.toMap.get('e').isDefined && occ.toMap.get('x').isDefined && occ.length == 3
+
+    def findSentences(all: Occurrences, occurrences: Occurrences, sentence: Sentence): List[Sentence] = {
+      combinations (occurrences) flatMap { occ =>
+        val words = dictionaryByOccurrences.get(occ) getOrElse Nil
+        if(isRex(occurrences)) {
+          println(occ)
+        }
+        (words, occ, all) match {
+          case (_, _, Nil) => List(sentence)
+          case (Nil, occ, all) if(occ.length > 0 || all.length > 0) => Nil
+          case (words, occ, _) =>
+            (for {
+              word <- words
+              s <- findSentences(subtract(all, occ), subtract(occurrences, occ), sentence :+ word)
+            } yield s)
         }
       }
     }
 
-    def findSentences(occurrences: Occurrences): List[Sentence] = {
-      findSentence(occurrences, Nil)
-    }
-
+    val all = sentenceOccurrences(sentence)
     def loop(occurrences: List[Occurrences], acc: List[Sentence]): List[Sentence] = {
       occurrences match {
         case Nil => acc
-        case head :: tail => loop(tail, acc ++ findSentences(head))
+        case head :: tail => loop(tail, acc ++ findSentences(all, head, Nil))
       }
     }
-
-    loop(combinations(sentenceOccurrences(sentence)), Nil)
+    loop(combinations(all), Nil)
   }
 }

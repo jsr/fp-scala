@@ -103,4 +103,10 @@ class AnagramsSuite extends FunSuite {
     assert(sentenceAnagrams(sentence).toSet === anas.toSet)
   }
 
+  // test("sentence anagrams: ") {
+  //   val sentence = List("Heather")
+  //   println(sentenceAnagrams(sentence))
+  //   assert(true === true)
+  // }
+
 }

@@ -37,7 +37,7 @@ object Anagrams {
 
   /** Converts a sentence into its character occurrence list. */
   def sentenceOccurrences(s: Sentence): Occurrences = s match {
-    case head :: tail => wordOccurrences(s.reduceLeft(_ + _))
+    case head :: tail => wordOccurrences(s.reduceLeft(_ + _)).sortBy(_._1)
     case Nil => Nil
   }
 
@@ -110,15 +110,16 @@ object Anagrams {
     }
 
     def loop(occ: Occurrences, acc: List[Occurrences]): List[Occurrences] = occ match {
+      case Nil => acc
+      case head :: Nil => acc ++ decompose(head).map(e => List(e))
       case head :: tail => {
         val res = (for {
             deep <- 1 to occurrences.length
             cb <- decompose(head)
-          } yield comb(List(List(cb)), tail map (decompose), deep)
+          } yield comb(List(List(cb)), tail.map(decompose), deep)
         ).reduceLeft(_ ++ _).toList
         loop(tail, acc ++ res)
       }
-      case Nil => acc
     }
     loop(occurrences, Nil) ++ List(Nil)
   }
@@ -138,7 +139,7 @@ object Anagrams {
       case (char, c1) :: tail => acc.get(char).map { c2 =>
         if(c2 - c1 <= 0) loop(acc - char, tail) else loop(acc updated (char, c2 - c1), tail)
       } getOrElse loop(acc, tail)
-      case Nil => acc.toList
+      case Nil => acc.toList.sortBy(_._1)
     }
     loop(x.toMap, y)
   }
@@ -186,15 +187,29 @@ object Anagrams {
 
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
 
+    def isRex(occ: Occurrences) = occ match {
+      case List(('e',1), ('r',2), ('x',1)) => true
+      case _ => false
+    }
+
     def findSentences(all: Occurrences, occurrences: Occurrences, sentence: Sentence): List[Sentence] = {
       combinations (occurrences) flatMap { occ =>
-        val words = dictionaryByOccurrences.get(occ) getOrElse Nil
-        (words, occ, all) match {
-          case (_, _, Nil) => List(sentence)
+        if(isRex(occ)) println("[OCCS] - " + occurrences)
+        if(isRex(occ)) println("[COMBINAISON] - " + combinations(occurrences))
+        if(isRex(occ)) println("----------------------------")
+        val sortedOcc = occ
+        val debug = false
+        if(isRex(occ)) println("[ALL] - " + all)
+        if(isRex(occ)) println("[OCC] - " + occ)
+        if(isRex(occ)) println("[SEN] - " + sentence)
+        val words = dictionaryByOccurrences.get(sortedOcc) getOrElse Nil
+        (words, sortedOcc, all) match {
+          case (_, Nil, _) => List(sentence)
           case (Nil, occ, all) if(occ.length > 0 || all.length > 0) => Nil
           case (words, occ, _) =>
             (for {
               word <- words
+              if(!sentence.contains(word))
               s <- findSentences(subtract(all, occ), subtract(occurrences, occ), sentence :+ word)
             } yield s)
         }
@@ -205,9 +220,71 @@ object Anagrams {
     def loop(occurrences: List[Occurrences], acc: List[Sentence]): List[Sentence] = {
       occurrences match {
         case Nil => acc
-        case head :: tail => loop(tail, acc ++ findSentences(all, head, Nil))
+        case head :: tail => {
+          println("=========================================")
+          println("[HEAD] - " + head)
+          val sentence = findSentences(all, head, Nil).filter(s => !s.isEmpty)
+          println("[RESULT] - " + sentence)
+          println("=========================================")
+          loop(tail, acc ++ sentence)
+        }
       }
     }
-    loop(combinations(all), Nil)
+    println("#############################")
+    println(all)
+    println(combinations(all))
+    println("#############################")
+    loop(combinations(all), Nil).distinct ++ List(Nil)
   }
 }
+
+
+List((e,1), (i,1), (l,2), (n,1), (r,1), (u,2), (x,1), (z,1))
+
+List(
+  List((e,1)),
+  List((e,1), (i,1)),
+  List((e,1), (i,1), (l,1)),
+  List((e,1), (i,1), (l,2)),
+  List((e,1), (i,1), (l,1), (n,1)),
+  List((e,1), (i,1), (l,2), (n,1)),
+  List((e,1), (i,1), (l,1), (n,1),(r,1)),
+  List((e,1), (i,1), (l,2), (n,1), (r,1)),
+  List((e,1), (i,1), (l,1), (n,1), (r,1), (u,1)),
+  List((e,1), (i,1), (l,2), (n,1), (r,1), (u,1)),
+  List((e,1), (i,1), (l,1), (n,1), (r,1), (u,2)),
+  List((e,1), (i,1), (l,2), (n,1), (r,1), (u,2)),
+  List((e,1), (i,1), (l,1), (n,1), (r,1), (u,1),(x,1)),
+  List((e,1), (i,1), (l,2), (n,1), (r,1), (u,1), (x,1)),
+  List((e,1), (i,1), (l,1), (n,1), (r,1), (u,2), (x,1)),
+  List((e,1), (i,1), (l,2), (n,1), (r,1), (u,2), (x,1)),
+  List((e,1), (i,1), (l,1), (n,1), (r,1), (u,1), (x,1), (z,1)),
+  List((e,1), (i,1), (l,2), (n,1), (r,1), (u,1), (x,1), (z,1)),
+  List((e,1), (i,1), (l,1), (n,1), (r,1), (u,2), (x,1), (z,1)),
+  List((e,1), (i,1), (l,2), (n,1), (r,1), (u,2), (x,1), (z,1)),
+  List((i,1)), List((i,1), (l,1)), List((i,1), (l,2)), List((i,1), (l,1), (n,1)), List((i,1), (l,2), (n,1)), List((i,1), (l,1), (n,1), (r,1)), List((i,1), (l,2), (n,1), (r,1)), List((i,1), (l,1), (n,1), (r,1), (u,1)), List((i,1), (l,2), (n,1), (r,1), (u,1)), List((i,1), (l,1), (n,1), (r,1), (u,2)), List((i,1), (l,2), (n,1), (r,1), (u,2)), List((i,1), (l,1), (n,1), (r,1), (u,1), (x,1)), List((i,1), (l,2), (n,1), (r,1), (u,1), (x,1)), List((i,1), (l,1), (n,1), (r,1), (u,2), (x,1)), List((i,1), (l,2), (n,1), (r,1), (u,2), (x,1)), List((i,1), (l,1), (n,1), (r,1), (u,1), (x,1), (z,1)), List((i,1), (l,2), (n,1), (r,1), (u,1), (x,1), (z,1)), List((i,1), (l,1), (n,1), (r,1), (u,2), (x,1), (z,1)), List((i,1), (l,2), (n,1), (r,1), (u,2), (x,1), (z,1)), List((i,1), (l,1), (n,1), (r,1), (u,1), (x,1), (z,1)), List((i,1), (l,2), (n,1), (r,1), (u,1), (x,1), (z,1)), List((i,1), (l,1), (n,1), (r,1), (u,2), (x,1), (z,1)), List((i,1), (l,2), (n,1), (r,1), (u,2), (x,1), (z,1)), List((l,1)), List((l,2)), List((l,1), (n,1)), List((l,2), (n,1)), List((l,1), (n,1), (r,1)), List((l,2), (n,1), (r,1)), List((l,1), (n,1), (r,1), (u,1)), List((l,1), (n,1), (r,1), (u,2)), List((l,2), (n,1), (r,1), (u,1)), List((l,2), (n,1), (r,1), (u,2)), List((l,1), (n,1), (r,1), (u,1), (x,1)), List((l,1), (n,1), (r,1), (u,2), (x,1)), List((l,2), (n,1), (r,1), (u,1), (x,1)), List((l,2), (n,1), (r,1), (u,2), (x,1)), List((l,1), (n,1), (r,1), (u,1), (x,1), (z,1)), List((l,1), (n,1), (r,1), (u,2), (x,1), (z,1)), List((l,2), (n,1), (r,1), (u,1), (x,1), (z,1)), List((l,2), (n,1), (r,1), (u,2), (x,1), (z,1)), List((l,1), (n,1), (r,1), (u,1), (x,1), (z,1)), List((l,1), (n,1), (r,1), (u,2), (x,1), (z,1)), List((l,2), (n,1), (r,1), (u,1), (x,1), (z,1)), List((l,2), (n,1), (r,1), (u,2), (x,1), (z,1)), List((l,1), (n,1), (r,1), (u,1), (x,1), (z,1)), List((l,1), (n,1), (r,1), (u,2), (x,1), (z,1)), List((l,2), (n,1), (r,1), (u,1), (x,1), (z,1)), List((l,2), (n,1), (r,1), (u,2), (x,1), (z,1)), List((n,1)), List((n,1), (r,1)), List((n,1), (r,1), (u,1)), List((n,1), (r,1), (u,2)), List((n,1), (r,1), (u,1), (x,1)), List((n,1), (r,1), (u,2), (x,1)), List((n,1), (r,1), (u,1), (x,1), (z,1)), List((n,1), (r,1), (u,2), (x,1), (z,1)), List((n,1), (r,1), (u,1), (x,1), (z,1)), List((n,1), (r,1), (u,2), (x,1), (z,1)), List((n,1), (r,1), (u,1), (x,1), (z,1)), List((n,1), (r,1), (u,2), (x,1), (z,1)), List((n,1), (r,1), (u,1), (x,1), (z,1)), List((n,1), (r,1), (u,2), (x,1), (z,1)), List((r,1)), List((r,1), (u,1)), List((r,1), (u,2)), List((r,1), (u,1), (x,1)), List((r,1), (u,2), (x,1)), List((r,1), (u,1), (x,1), (z,1)), List((r,1), (u,2), (x,1), (z,1)), List((r,1), (u,1), (x,1), (z,1)), List((r,1), (u,2), (x,1), (z,1)), List((r,1), (u,1), (x,1), (z,1)), List((r,1), (u,2), (x,1), (z,1)), List((r,1), (u,1), (x,1), (z,1)), List((r,1), (u,2), (x,1), (z,1)), List((r,1), (u,1), (x,1), (z,1)), List((r,1), (u,2), (x,1), (z,1)), List((u,1)), List((u,2)), List((u,1), (x,1)), List((u,2), (x,1)), List((u,1), (x,1), (z,1)), List((u,2), (x,1), (z,1)), List((u,1), (x,1), (z,1)), List((u,2), (x,1), (z,1)), List((u,1), (x,1), (z,1)), List((u,2), (x,1), (z,1)), List((u,1), (x,1), (z,1)), List((u,2), (x,1), (z,1)), List((u,1), (x,1), (z,1)), List((u,2), (x,1), (z,1)), List((u,1), (x,1), (z,1)), List((u,2), (x,1), (z,1)), List((x,1)), List((x,1), (z,1)), List((x,1), (z,1)), List((x,1), (z,1)), List((x,1), (z,1)), List((x,1), (z,1)), List((x,1), (z,1)), List((x,1), (z,1)), List((z,1)), List())
+
+
+List(
+  List((a,1)),
+  List((a,2)),
+  List((a,1), (b,1)),
+  List((a,1), (b,2)),
+  List((a,2), (b,1)),
+  List((a,2), (b,2)),
+  List((a,1), (b,1), (c,1)),
+  List((a,1), (b,2), (c,1)),
+  List((a,1), (b,1), (c,2)),
+  List((a,1), (b,2), (c,2)),
+  List((a,2), (b,1), (c,1)),
+  List((a,2), (b,2), (c,1)),
+  List((a,2), (b,1), (c,2)),
+  List((a,2), (b,2), (c,2)),
+  List((b,1)),
+  List((b,2)),
+  List((b,1), (c,1)),
+  List((b,1), (c,2)),
+  List((b,2), (c,1)),
+  List((b,2), (c,2)),
+  List((b,1), (c,1)),
+  List((b,1), (c,2)), List((b,2), (c,1)), List((b,2), (c,2)), List((c,1)), List((c,2)), List())
