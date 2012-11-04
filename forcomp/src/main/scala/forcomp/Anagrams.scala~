@@ -98,14 +98,17 @@ object Anagrams {
     def comb(elt: List[Occurrences], rest: List[Occurrences], deep: Int): List[Occurrences] = {
       (elt, rest) match {
         case (head :: tail, _) if(head.length == deep) => elt
-        case (acc, head :: tail) => {
+        case (acc, tail) => {
           val res = for {
-            x <- head
+            t <- tail
+            x <- t
             y <- elt
-          } yield (y :+ x)
+            if(!y.contains(x))
+          } yield {
+            (y :+ x)
+          }
           comb(res, tail, deep)
         }
-        case (_, Nil) => elt
       }
     }
 
@@ -117,9 +120,12 @@ object Anagrams {
             cb <- decompose(head)
           } yield comb(List(List(cb)), tail.map(decompose), deep)
         ).reduceLeft(_ ++ _).toList
-        if(!remain.contains(head)) 
+        if(!remain.contains(head)) {
           loop(head :: remain, tail :+ head, acc ++ res)
-        else acc
+        }
+        else {
+          acc
+        }
       }
     }
     loop(Nil, occurrences, Nil).map(_.sortBy(identity)).distinct ++ List(Nil)
@@ -140,7 +146,9 @@ object Anagrams {
       case (char, c1) :: tail => acc.get(char).map { c2 =>
         if(c2 - c1 <= 0) loop(acc - char, tail) else loop(acc updated (char, c2 - c1), tail)
       } getOrElse loop(acc, tail)
-      case Nil => acc.toList.sortBy(_._1)
+      case Nil => {
+        acc.toList.sortBy(_._1)
+      }
     }
     loop(x.toMap, y)
   }
@@ -185,21 +193,23 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
-
+//linux rulez (l,2) (i,1) (n,1) (u, 2) (x, 1) (r, 1) (e, 1), (z, 1)
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
     def findSentences(all: Occurrences, occurrences: Occurrences, sentence: Sentence): List[Sentence] = {
-      println(occurrences)
       combinations (occurrences).flatMap { occ =>
-        if(sentence.length > 1 && sentence(0) == "Rex" && sentence(1) == "Lin") println(sentence, occurrences, all)
         val words = dictionaryByOccurrences.get(occ) getOrElse Nil
         (words, occ, all) match {
-          case (_, Nil, _) => List(sentence)
-          case (Nil, _, _) if((!occ.isEmpty || occ.length != 1) && occ != occurrences) => findSentences(all, occ, sentence)
-          case (words, occ, _) =>
+          case (_, _, Nil) => {
+            List(sentence)
+          }
+
+          case (words, occ, _) => {
             (for {
               word <- words
+              if(!sentence.contains(word))
               s <- findSentences(subtract(all, occ), subtract(all, occ), sentence :+ word)
             } yield s)
+          }
         }
       }
     }

@@ -107,7 +107,7 @@ object Anagrams {
           } yield {
             (y :+ x)
           }
-          comb(res, tail, deep)
+          if(tail.length > 1) comb(res, tail.tail, deep) else comb(res, tail, deep)
         }
       }
     }
@@ -123,9 +123,7 @@ object Anagrams {
         if(!remain.contains(head)) {
           loop(head :: remain, tail :+ head, acc ++ res)
         }
-        else {
-          acc
-        }
+        else acc
       }
     }
     loop(Nil, occurrences, Nil).map(_.sortBy(identity)).distinct ++ List(Nil)
@@ -193,20 +191,19 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
-//linux rulez (l,2) (i,1) (n,1) (u, 2) (x, 1) (r, 1) (e, 1), (z, 1)
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
     def findSentences(all: Occurrences, occurrences: Occurrences, sentence: Sentence): List[Sentence] = {
-      combinations (occurrences).flatMap { occ =>
+      if(occurrences.toMap.get('a').isDefined && occurrences.toMap.get('r').isDefined && occurrences.toMap.get('t').isDefined) println(all, occurrences, sentence)
+      combinations(occurrences).flatMap { occ =>
+        if(occ.toMap.get('a').isDefined && occ.toMap.get('r').isDefined && occ.toMap.get('t').isDefined) println(all, occurrences, occ, sentence)
         val words = dictionaryByOccurrences.get(occ) getOrElse Nil
         (words, occ, all) match {
           case (_, _, Nil) => {
             List(sentence)
           }
-
           case (words, occ, _) => {
             (for {
               word <- words
-              if(!sentence.contains(word))
               s <- findSentences(subtract(all, occ), subtract(all, occ), sentence :+ word)
             } yield s)
           }
@@ -214,6 +211,6 @@ object Anagrams {
       }
     }
     val all = sentenceOccurrences(sentence)
-    findSentences(all, all , Nil)
+    findSentences(all, all, Nil)
   }
 }
