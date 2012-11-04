@@ -37,7 +37,7 @@ object Anagrams {
 
   /** Converts a sentence into its character occurrence list. */
   def sentenceOccurrences(s: Sentence): Occurrences = s match {
-    case head :: tail => wordOccurrences(s.reduceLeft(_ + _))
+    case head :: tail => wordOccurrences(s.reduceLeft(_ + _)).sortBy(_._1)
     case Nil => Nil
   }
 
@@ -109,18 +109,20 @@ object Anagrams {
       }
     }
 
-    def loop(occ: Occurrences, acc: List[Occurrences]): List[Occurrences] = occ match {
-      case head :: tail => {
+    def loop(remain: Occurrences, occ: Occurrences, acc: List[Occurrences]): List[Occurrences] = occ match {
+      case Nil => acc
+      case (head :: tail) => {
         val res = (for {
             deep <- 1 to occurrences.length
             cb <- decompose(head)
-          } yield comb(List(List(cb)), tail map (decompose), deep)
+          } yield comb(List(List(cb)), tail.map(decompose), deep)
         ).reduceLeft(_ ++ _).toList
-        loop(tail, acc ++ res)
+        if(!remain.contains(head)) 
+          loop(head :: remain, tail :+ head, acc ++ res)
+        else acc
       }
-      case Nil => acc
     }
-    loop(occurrences, Nil) ++ List(Nil)
+    loop(Nil, occurrences, Nil).map(_.sortBy(identity)).distinct ++ List(Nil)
   }
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
@@ -138,7 +140,7 @@ object Anagrams {
       case (char, c1) :: tail => acc.get(char).map { c2 =>
         if(c2 - c1 <= 0) loop(acc - char, tail) else loop(acc updated (char, c2 - c1), tail)
       } getOrElse loop(acc, tail)
-      case Nil => acc.toList
+      case Nil => acc.toList.sortBy(_._1)
     }
     loop(x.toMap, y)
   }
@@ -185,34 +187,23 @@ object Anagrams {
    */
 
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
-
-    def isRex(occ: Occurrences) = occ.toMap.get('r').isDefined  && occ.toMap.get('e').isDefined && occ.toMap.get('x').isDefined && occ.length == 3
-
     def findSentences(all: Occurrences, occurrences: Occurrences, sentence: Sentence): List[Sentence] = {
-      combinations (occurrences) flatMap { occ =>
+      println(occurrences)
+      combinations (occurrences).flatMap { occ =>
+        if(sentence.length > 1 && sentence(0) == "Rex" && sentence(1) == "Lin") println(sentence, occurrences, all)
         val words = dictionaryByOccurrences.get(occ) getOrElse Nil
-        if(isRex(occurrences)) {
-          println(occ)
-        }
         (words, occ, all) match {
-          case (_, _, Nil) => List(sentence)
-          case (Nil, occ, all) if(occ.length > 0 || all.length > 0) => Nil
+          case (_, Nil, _) => List(sentence)
+          case (Nil, _, _) if((!occ.isEmpty || occ.length != 1) && occ != occurrences) => findSentences(all, occ, sentence)
           case (words, occ, _) =>
             (for {
               word <- words
-              s <- findSentences(subtract(all, occ), subtract(occurrences, occ), sentence :+ word)
+              s <- findSentences(subtract(all, occ), subtract(all, occ), sentence :+ word)
             } yield s)
         }
       }
     }
-
     val all = sentenceOccurrences(sentence)
-    def loop(occurrences: List[Occurrences], acc: List[Sentence]): List[Sentence] = {
-      occurrences match {
-        case Nil => acc
-        case head :: tail => loop(tail, acc ++ findSentences(all, head, Nil))
-      }
-    }
-    loop(combinations(all), Nil)
+    findSentences(all, all , Nil)
   }
 }
