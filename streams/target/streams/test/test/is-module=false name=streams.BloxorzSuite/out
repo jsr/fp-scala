@@ -1,8 +1,5 @@
 [0m[[0minfo[0m] [0m[32mBloxorzSuite:[0m[0m
 [0m[[0minfo[0m] [0m[32m- terrain function level 1[0m[0m
 [0m[[0minfo[0m] [0m[32m- findChar level 1[0m[0m
-[0m[[0minfo[0m] [0m[32m- neighborsWithHistory[0m[0m
-[0m[[0minfo[0m] [0m[32m- neighborsOnly[0m[0m
 [0m[[0minfo[0m] [0m[32m- optimal solution for level 1[0m[0m
-[0m[[0minfo[0m] [0m[31m- optimal solution length for level 1 *** FAILED ***[0m[0m
-[0m[[0minfo[0m] [0m[31m  org.scalatest.exceptions.TestFailedException was thrown. (BloxorzSuite.scala:94)[0m[0m
+[0m[[0minfo[0m] [0m[32m- optimal solution length for level 1[0m[0m

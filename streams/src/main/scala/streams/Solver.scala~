@@ -97,10 +97,10 @@ trait Solver extends GameDef {
       moves match {
         case Nil => None
         case Left :: tail =>
-          if(done (block)) Some((block, moves))
+          if(done (block)) { Some((block, moves)) }
           else wantedPath (block.right, tail)
         case Right :: tail => 
-          if(done (block)) Some((block, moves))
+          if(done (block)) { Some((block, moves)) }
           else wantedPath (block.left, tail)
         case Up :: tail =>
           if(done (block)) Some((block, moves))

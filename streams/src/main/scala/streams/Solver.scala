@@ -78,7 +78,7 @@ trait Solver extends GameDef {
       }).foldLeft((Stream[(Block, List[Move])](), List[Block]())) { (acc, x) =>
         ((acc._1 #::: x._1) , (x._2 :: acc._2))
       }
-      (initial #::: from(more, explored ++ blocks)).sortBy { case (_, moves) => moves.length }
+      (initial #::: from(more, explored ++ blocks))
     }
   }
 
