@@ -78,22 +78,20 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
-
-  test("pathsFromStart") {
+  test("optimal solution for level 1") {
     new Level1 {
-      println(pathsFromStart)
-      assert(true == true)
+      assert(solve(solution) == Block(goal, goal)) //4,7
     }
   }
-  // test("optimal solution for level 1") {
-  //   new Level1 {
-  //     assert(solve(solution) == Block(goal, goal))
-  //   }
-  // }
 
-  // test("optimal solution length for level 1") {
-  //   new Level1 {
-  //     assert(solution.length == optsolution.length)
-  //   }
-  // }
+  test("optimal solution length for level 1") {
+    new Level1 {
+      val sol = solution
+      val sol2 = optsolution
+      println("############")
+      pathsToGoal foreach(path => println(path))
+      println("############")
+      assert(sol.length == sol2.length)
+    }
+  }
 }

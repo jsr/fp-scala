@@ -10,7 +10,7 @@ trait Solver extends GameDef {
   /**
    * Returns `true` if the block `b` is at the final position
    */
-  def done(b: Block): Boolean = b == goal
+  def done(b: Block): Boolean = b == Block(goal, goal)
 
   /**
    * This function takes two arguments: the current block `b` and
@@ -39,7 +39,7 @@ trait Solver extends GameDef {
    * make sure that we don't explore circular paths.
    */
   def newNeighborsOnly(neighbors: Stream[(Block, List[Move])], explored: Set[Block]): Stream[(Block, List[Move])] = {
-    neighbors.filter {
+    neighbors filter {
       case (block, moves) => !explored.find(_ == block).isDefined
     }
   }
@@ -70,15 +70,15 @@ trait Solver extends GameDef {
   def from(initial: Stream[(Block, List[Move])], explored: Set[Block]): Stream[(Block, List[Move])] = {
     if(initial.isEmpty) Stream.empty
     else {
-      (for {
+      val (more, blocks): (Stream[(Block, List[Move])], List[Block]) = (for {
         (block, moves) <- initial
       } yield {
         val neighbors = neighborsWithHistory(block, moves)
-        val newNeighbors = newNeighborsOnly(neighbors, explored)
-        if(newNeighbors.isEmpty) initial
-        else
-        from (newNeighbors, explored + block)
-      }) reduceLeft(_ ++ _) sortBy { case (_, moves) => moves.length }
+        newNeighborsOnly(neighbors, explored) -> block
+      }).foldLeft((Stream[(Block, List[Move])](), List[Block]())) { (acc, x) =>
+        ((acc._1 #::: x._1) , (x._2 :: acc._2))
+      }
+      (initial #::: from(more, explored ++ blocks)).sortBy { case (_, moves) => moves.length }
     }
   }
 
@@ -92,8 +92,28 @@ trait Solver extends GameDef {
    * Returns a stream of all possible pairs of the goal block along
    * with the history how it was reached.
    */
-  lazy val pathsToGoal: Stream[(Block, List[Move])] =
-    pathsFromStart filter { case (block, moves) => done(block) }
+  lazy val pathsToGoal: Stream[(Block, List[Move])] = {
+    def wantedPath(block: Block, moves: List[Move]): Option[(Block, List[Move])] = {
+      moves match {
+        case Nil => None
+        case Left :: tail =>
+          if(done (block)) { Some((block, moves)) }
+          else wantedPath (block.right, tail)
+        case Right :: tail => 
+          if(done (block)) { Some((block, moves)) }
+          else wantedPath (block.left, tail)
+        case Up :: tail =>
+          if(done (block)) Some((block, moves))
+          else wantedPath (block.down, tail)
+        case Down :: tail =>
+          if(done (block)) Some((block, moves))
+          else wantedPath (block.up, tail)
+      }
+    }
+    pathsFromStart.flatMap { path =>
+      wantedPath(path._1, path._2)
+    }.distinct.sortBy(p => p._2.length)
+  }
 
   /**
    * The (or one of the) shortest sequence(s) of moves to reach the
@@ -103,11 +123,7 @@ trait Solver extends GameDef {
    * the first move that the player should perform from the starting
    * position.
    */
-  lazy val solution: List[Move] = {
-    if(solution.isEmpty) Nil
-    else {
-      val (block, moves) = pathsToGoal.head
-      moves
-    }
-  }
+  lazy val solution: List[Move] = pathsToGoal.headOption.map {
+    case (block, moves) => moves.reverse
+  } getOrElse Nil
 }

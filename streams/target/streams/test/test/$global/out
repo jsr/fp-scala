@@ -1,40 +1,6 @@
 [0m[[0mdebug[0m] [0mRunning Test streams.BloxorzSuite : subclass(false, org.scalatest.Suite) with arguments [0m
-java.lang.OutOfMemoryError: Java heap space
-	at java.util.Arrays.sort(Arrays.java:1206)
-	at scala.collection.SeqLike$class.sorted(SeqLike.scala:634)
-	at scala.collection.immutable.Stream.sorted(Stream.scala:186)
-	at scala.collection.SeqLike$class.sortBy(SeqLike.scala:613)
-	at scala.collection.immutable.Stream.sortBy(Stream.scala:186)
-	at streams.Solver$class.from(Solver.scala:81)
-	at streams.BloxorzSuite$$anonfun$5$$anon$5.from(BloxorzSuite.scala:83)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:80)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:74)
-	at scala.collection.immutable.Stream.map(Stream.scala:376)
-	at streams.Solver$class.from(Solver.scala:74)
-	at streams.BloxorzSuite$$anonfun$5$$anon$5.from(BloxorzSuite.scala:83)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:80)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:74)
-	at scala.collection.immutable.Stream$$anonfun$map$1.apply(Stream.scala:376)
-	at scala.collection.immutable.Stream$$anonfun$map$1.apply(Stream.scala:376)
-	at scala.collection.immutable.Stream$Cons.tail(Stream.scala:1060)
-	at scala.collection.immutable.Stream$Cons.tail(Stream.scala:1052)
-	at scala.collection.immutable.Stream.reduceLeft(Stream.scala:556)
-	at streams.Solver$class.from(Solver.scala:81)
-	at streams.BloxorzSuite$$anonfun$5$$anon$5.from(BloxorzSuite.scala:83)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:80)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:74)
-	at scala.collection.immutable.Stream.map(Stream.scala:376)
-	at streams.Solver$class.from(Solver.scala:74)
-	at streams.BloxorzSuite$$anonfun$5$$anon$5.from(BloxorzSuite.scala:83)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:80)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:74)
-	at scala.collection.immutable.Stream.map(Stream.scala:376)
-	at streams.Solver$class.from(Solver.scala:74)
-	at streams.BloxorzSuite$$anonfun$5$$anon$5.from(BloxorzSuite.scala:83)
-	at streams.Solver$$anonfun$from$2.apply(Solver.scala:80)
-[0m[[31merror[0m] [0mCould not run test streams.BloxorzSuite: java.lang.OutOfMemoryError: Java heap space[0m
-[0m[[31merror[0m] [0mError: Total 0, Failed 0, Errors 0, Passed 0, Skipped 0[0m
-[0m[[31merror[0m] [0mError during tests:[0m
+[0m[[31merror[0m] [0mFailed: : Total 6, Failed 1, Errors 0, Passed 5, Skipped 0[0m
+[0m[[31merror[0m] [0mFailed tests:[0m
 [0m[[31merror[0m] [0m	streams.BloxorzSuite[0m
 java.lang.RuntimeException: Tests unsuccessful
 	at scala.sys.package$.error(package.scala:27)
